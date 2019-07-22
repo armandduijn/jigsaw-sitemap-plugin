@@ -24,17 +24,16 @@ class DefaultSitemapGenerator implements GeneratorInterface
         );
         $sitemap = new Sitemap((string) $destinationPath);
 
+        $blacklist = collect([])
+            ->concat(['/assets/*', '*/favicon.ico', '*/404',])
+            ->concat($app->getConfig('sitemap.blacklist') ?? []);
+
         collect($app->getOutputPaths())
             ->sortBy(function (string $path) {
                 return $path;
             }, SORT_DESC, true)
-            ->reject(function ($path) {
-                // @todo add proper blacklist component
-                return str_is([
-                    '/assets/*',
-                    '*/favicon.ico',
-                    '*/404',
-                ], $path);
+            ->reject(function ($path) use ($blacklist) {
+                return str_is($blacklist->values()->toArray(), $path);
             })
             ->each(function ($path) use ($baseUrl, $lastModifiedGenerator, $sitemap) {
                 $url = rtrim((string) $baseUrl, '/') . $path;
