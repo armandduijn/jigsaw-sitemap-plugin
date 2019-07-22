@@ -29,3 +29,24 @@ $events->afterBuild([SitemapListener::class]);
 
 After running the build you should see a `sitemap.xml` file
 inside build's output folder.
+
+### Configuration
+
+To prevent certain pages from being included in the sitemap, add
+the following setting to your project's `config.php` file.
+
+```php
+<?php
+
+return [
+    ...
+    'sitemap' => [
+        'blacklist' => [
+            '*/submit',
+            '404.html'
+        ]
+    ]
+    ...
+```
+
+You may use asterisks to indicate wildcards.
